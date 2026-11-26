@@ -83,7 +83,10 @@ public sealed record class PlatformReleaseManifest
     /// Whether the platform was built with an RDCore.SDK compatible with <paramref name="sdk"/>, by
     /// <see cref="PlatformVersion.IsCompatibleWith"/>; false when the manifest does not say which one it was built with.
     /// </summary>
-    /// <param name="sdk">The RDCore.SDK version a client was built with, such as <see cref="RDCoreSdk.Version"/>.</param>
+    /// <param name="sdk">
+    /// The RDCore.SDK version a client was built with; or, for a client that references RDCore.SDK.Protocols alone, the RDCore.SDK.Protocols one
+    /// (<see cref="RDCoreSdk.Version"/>), which is compatible with the RDCore.SDK that depends on it.
+    /// </param>
     public bool IsBuiltWith(PlatformVersion sdk)
     {
         ArgumentNullException.ThrowIfNull(sdk);

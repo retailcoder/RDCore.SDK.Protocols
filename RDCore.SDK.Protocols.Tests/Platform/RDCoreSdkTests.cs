@@ -5,7 +5,7 @@ using RDCore.SDK.Platform;
 namespace RDCore.Tests.Platform;
 
 /// <summary>
-/// The version of the RDCore.SDK a program runs with, as the SDK's build stamps it.
+/// The version of the RDCore.SDK.Protocols a program runs with, as its build stamps it.
 /// </summary>
 [TestClass]
 public sealed class RDCoreSdkTests
