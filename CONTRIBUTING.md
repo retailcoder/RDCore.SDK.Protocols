@@ -25,7 +25,7 @@ Ce dernier point constituant en toute transparence **l'intérêt commercial** mo
 - ✅ **Oui — utilisez l'assistance de votre choix**, y compris l'implémentation de fonctionnalités complètes par un agent. L'essentiel est qu'**un·e contributeur·rice humain·e assume le résultat**.
 - ❌ **Aucune soumission autonome.** Un agent qui ouvre une _pull request_ de lui-même, ou du code que la personne qui le soumet ne peut pas expliquer, justifier et maintenir, sera refusé.
 
-Le critère n'est pas la *quantité* de code produite par l'IA — c'est la **paternité et l'imputabilité**. En soumettant, vous faites la même déclaration que tout le monde (voir **Éléments clés** ci-haut et la [CLA](CLA.fr.md)): le travail est le vôtre, vous le comprenez en entier, vous en assumez la conception, et vous en ferez la maintenance. Peu importe le chemin parcouru, **c'est vous** qui ouvrez la _pull request_ et **c'est vous** qui en répondez en révision.
+Le critère n'est pas la *quantité* de code produite par l'IA — c'est la **paternité et l'imputabilité**. En soumettant, vous faites la même déclaration que tout le monde (voir **Éléments clés** ci-haut et la [CLA](CLA.fr.md)) : le travail est le vôtre, vous le comprenez en entier, vous en assumez la conception, et vous en ferez la maintenance. Peu importe le chemin parcouru, **c'est vous** qui ouvrez la _pull request_ et **c'est vous** qui en répondez en révision.
 
 La complétion automatique de type _Copilot_ et l'usage d'un assistant pour explorer ou valider des idées d'implémentation, de solutions et d'architectures demeurent, comme toujours, **fortement encouragés**.
 
@@ -34,14 +34,14 @@ La complétion automatique de type _Copilot_ et l'usage d'un assistant pour expl
 
 RDCore cible **.NET 11**; le [SDK .NET 11](https://dotnet.microsoft.com/download) constitue le seul prérequis.
 
-À partir de la racine du référentiel:
+À partir de la racine du dépôt :
 
 ```powershell
 dotnet build RDCore.SDK.Protocols.slnx
 dotnet test RDCore.SDK.Protocols.slnx
 ```
 
-Une exécution réussie **doit rapporter un nombre de tests non nul**: une exécution qui ne découvre aucun test n'est pas une exécution réussie. L'option `--configuration Release` bâtit et teste de la même manière; l'intégration continue valide les deux configurations.
+Une exécution réussie **doit rapporter un nombre de tests non nul** : une exécution qui ne découvre aucun test n'est pas une exécution réussie. L'option `--configuration Release` bâtit et teste de la même manière; l'intégration continue valide les deux configurations.
 
 
 **V I V A T 🤝 C U C U M I S** ™
@@ -60,7 +60,7 @@ Please first read and accept the terms of our [_Contributor License Agreement_ (
 
 - 🧠 **YOU DECLARE** that YOU ARE THE SOLE AUTHOR of your contributions _and that these are FREE OF ANY EXTERNAL RIGHTS_ (i.e. you are making these contributions under your own name, without any external dependencies or legal implications);
   - You can therefore explain your contributions, justify your decisions, and maintain yourself the code you contribute.
-- 🔒 **YOU KEEP** your copyright _on your contributions_ - but the platform and its trademarks (held or claimed) are not negociable;
+- 🔒 **YOU KEEP** your copyright _on your contributions_ - but the platform and its trademarks (held or claimed) are not negotiable;
 - ⚖️ **YOUR CONTRIBUTIONS REMAIN OPEN-SOURCE** under **⚖️MIT** (RDCore.SDK.Protocols).
 - 🤝 **YOU AUTHORIZE THE INTEGRATION** of your contributions by the platform owner into a **PRIVATE VERSION UNDER A COMMERCIAL LICENSE**.
 
