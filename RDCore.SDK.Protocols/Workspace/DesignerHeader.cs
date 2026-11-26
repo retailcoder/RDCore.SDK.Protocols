@@ -15,7 +15,8 @@ namespace RDCore.SDK.Workspace;
 /// <param name="Line">The zero-based line of the <c>Begin</c> line in the module's text, its lines split at each line feed.</param>
 /// <param name="NameColumn">The zero-based column of <see cref="Line"/> where <paramref name="Name"/> starts.</param>
 /// <param name="EndLine">
-/// The zero-based line of the <c>End</c> that closes the designer block, past the blocks of its controls; <see langword="null"/> when the text never
-/// closes it. The platform reads no designer from a block that is never closed: the module is then a class module of no form.
+/// The zero-based line of the <c>End</c> that closes the designer block, or <see langword="null"/> when the text never closes it. Each control's
+/// <c>Begin</c> line opens a block that its own <c>End</c> closes. The lines of a property group (<c>BeginProperty</c> to <c>EndProperty</c>) are the
+/// property's: a <c>Begin</c> or an <c>End</c> among them opens or closes no block. The platform reads no designer from a block that is never closed.
 /// </param>
 public sealed record class DesignerHeader(FormControlClass Class, string Name, int Line, int NameColumn, int? EndLine);
