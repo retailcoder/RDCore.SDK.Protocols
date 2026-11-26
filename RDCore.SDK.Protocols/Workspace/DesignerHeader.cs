@@ -14,4 +14,8 @@ namespace RDCore.SDK.Workspace;
 /// <param name="Name">The name the line gives the form (<c>Form1</c>).</param>
 /// <param name="Line">The zero-based line of the <c>Begin</c> line in the module's text, its lines split at each line feed.</param>
 /// <param name="NameColumn">The zero-based column of <see cref="Line"/> where <paramref name="Name"/> starts.</param>
-public sealed record class DesignerHeader(FormControlClass Class, string Name, int Line, int NameColumn);
+/// <param name="EndLine">
+/// The zero-based line of the <c>End</c> that closes the designer block, past the blocks of its controls; <see langword="null"/> when the text never
+/// closes it. The platform reads no designer from a block that is never closed: the module is then a class module of no form.
+/// </param>
+public sealed record class DesignerHeader(FormControlClass Class, string Name, int Line, int NameColumn, int? EndLine);

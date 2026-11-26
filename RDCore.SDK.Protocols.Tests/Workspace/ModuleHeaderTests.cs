@@ -95,9 +95,28 @@ public sealed class ModuleHeaderTests
     public void DesignerOf_IsTheClassAndNameOfTheBeginLineAfterTheHeader(
         string source, string? library, string? className, string? classId, string formName, int line, int nameColumn)
     {
-        var expected = new DesignerHeader(new(library, className, classId is null ? null : Guid.Parse(classId)), formName, line, nameColumn);
+        var expected = new DesignerHeader(new(library, className, classId is null ? null : Guid.Parse(classId)), formName, line, nameColumn, EndLine: null);
 
-        Assert.AreEqual(expected, ModuleHeader.DesignerOf(source));
+        var actual = ModuleHeader.DesignerOf(source);
+
+        Assert.IsNotNull(actual);
+        Assert.AreEqual(expected, actual with { EndLine = null });
+    }
+
+    [TestMethod]
+    [DataRow(Form, 10, DisplayName = "a form: past the blocks of its controls and their property groups")]
+    [DataRow("VERSION 5.00\r\nBegin VB.MDIForm Main\r\nEnd\r\n", 2, DisplayName = "a block of no controls")]
+    [DataRow("\r\n  version 5.00\r\n   begin VB.PropertyPage General\r\n   end\r\n", 3, DisplayName = "an End in any case and indentation")]
+    [DataRow("VERSION 5.00\r\nBegin VB.Form F\r\n   BeginProperty Font\r\n      End\r\n   EndProperty\r\nEnd\r\n", 5,
+        DisplayName = "an End inside a property group is the property's")]
+    [DataRow("VERSION 5.00\r\nBegin VB.Form Broken\r\n   Caption = \"Broken\"\r\nAttribute VB_Name = \"Broken\"\r\n", null, DisplayName = "a block never closed")]
+    [DataRow("VERSION 5.00\r\nBegin VB.Form F\r\n   Begin VB.Label L\r\n   End\r\n", null, DisplayName = "a control's End does not close the form's block")]
+    public void DesignerOf_EndLine_IsTheEndThatClosesTheDesignerBlock(string source, int? endLine)
+    {
+        var header = ModuleHeader.DesignerOf(source);
+
+        Assert.IsNotNull(header);
+        Assert.AreEqual(endLine, header.EndLine);
     }
 
     [TestMethod]

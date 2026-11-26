@@ -132,8 +132,8 @@ public static partial class ModuleHeader
     /// </remarks>
     /// <param name="source">The module file's text, or <c>null</c> when it could not be read.</param>
     /// <returns>
-    /// The designer, its class, the name it gives the form, and where; or <c>null</c> when the text has no such header: a standard or class module, or no
-    /// text.
+    /// The designer, its class, the name it gives the form, where, and the line that closes its block (<see cref="DesignerHeader.EndLine"/>); or
+    /// <c>null</c> when the text has no such header: a standard or class module, or no text.
     /// </returns>
     public static DesignerHeader? DesignerOf(string? source)
     {
@@ -164,7 +164,41 @@ public static partial class ModuleHeader
         }
 
         var name = begin.Groups["name"];
-        return new DesignerHeader(DesignerClassOf(begin.Groups["class"].Value), name.Value, index, name.Index);
+        return new DesignerHeader(DesignerClassOf(begin.Groups["class"].Value), name.Value, index, name.Index, EndOf(lines, index));
+    }
+
+    // the line of the End that closes the block opened at `begin`, past the blocks of its controls, or null when the text never closes it. A property
+    // group's lines (BeginProperty ... EndProperty) are the property's: no Begin or End among them opens or closes a block.
+    private static int? EndOf(string[] lines, int begin)
+    {
+        var open = 1;
+        var propertyDepth = 0;
+        for (var index = begin + 1; index < lines.Length; index++)
+        {
+            var line = lines[index].Trim();
+            if (line.StartsWith("BeginProperty", StringComparison.OrdinalIgnoreCase))
+            {
+                propertyDepth++;
+            }
+            else if (line.StartsWith("EndProperty", StringComparison.OrdinalIgnoreCase))
+            {
+                propertyDepth = Math.Max(0, propertyDepth - 1);
+            }
+            else if (propertyDepth > 0)
+            {
+                continue;
+            }
+            else if (DesignerBeginLine().IsMatch(lines[index]))
+            {
+                open++;
+            }
+            else if (line.Equals("End", StringComparison.OrdinalIgnoreCase) && --open == 0)
+            {
+                return index;
+            }
+        }
+
+        return null;
     }
 
     // a designer's class as its Begin line writes it; the Microsoft Forms designer's class identifier is a UserForm's
