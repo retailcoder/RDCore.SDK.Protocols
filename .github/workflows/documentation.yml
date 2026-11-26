@@ -53,7 +53,7 @@ jobs:
    - name: Redirect page
      if: steps.site.outputs.exists != 'true'
      env:
-      TARGET: https://rubberduck-vba.github.io/RDCore/api/RDCore.SDK.html
+      TARGET: https://rubberduck-vba.github.io/RDCore.SDK/api/RDCore.SDK.html
      run: |
       mkdir -p docs/_site
       printf '<!doctype html>\n<html lang="en"><head><meta charset="utf-8"><title>RDCore.SDK</title><meta http-equiv="refresh" content="0; url=%s"><link rel="canonical" href="%s"></head>\n<body><a href="%s">RDCore.SDK</a></body></html>\n' "$TARGET" "$TARGET" "$TARGET" > docs/_site/index.html

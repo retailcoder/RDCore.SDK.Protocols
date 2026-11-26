@@ -1,6 +1,6 @@
 name: Release
 
-# Publishes RDCore.SDK to nuget.org from a v<VersionPrefix>[-suffix] tag a maintainer pushes.
+# Publishes RDCore.SDK.Protocols to nuget.org from a v<VersionPrefix>[-suffix] tag a maintainer pushes.
 # The build job runs the repo's code with read-only permissions; the publish job runs none of it, waits for a required
 # reviewer on the `release` environment, and pushes with a short-lived key from NuGet trusted publishing (no stored secret).
 # A dry run (Run workflow) builds, tests and packs, and keeps the packages as an artifact; it never publishes.
@@ -68,20 +68,20 @@ jobs:
        fi
 
    - name: Build
-     run: dotnet build RDCore.SDK.slnx --configuration Release -p:VersionSuffix=${{ steps.version.outputs.suffix }} -p:ContinuousIntegrationBuild=true
+     run: dotnet build RDCore.SDK.Protocols.slnx --configuration Release -p:VersionSuffix=${{ steps.version.outputs.suffix }} -p:ContinuousIntegrationBuild=true
 
    - name: Test
-     run: dotnet test RDCore.SDK.slnx --configuration Release --no-build --verbosity normal
+     run: dotnet test RDCore.SDK.Protocols.slnx --configuration Release --no-build --verbosity normal
 
    - name: Pack
-     run: dotnet pack RDCore.SDK.slnx --configuration Release --no-build -p:VersionSuffix=${{ steps.version.outputs.suffix }} --output packages
+     run: dotnet pack RDCore.SDK.Protocols.slnx --configuration Release --no-build -p:VersionSuffix=${{ steps.version.outputs.suffix }} --output packages
 
    - name: The package is the version
      run: |
        ls packages
        v="${{ steps.version.outputs.version }}"
        for ext in nupkg snupkg; do
-         [ -f "packages/RDCore.SDK.$v.$ext" ] || { echo "::error::Missing packages/RDCore.SDK.$v.$ext"; exit 1; }
+         [ -f "packages/RDCore.SDK.Protocols.$v.$ext" ] || { echo "::error::Missing packages/RDCore.SDK.Protocols.$v.$ext"; exit 1; }
        done
        [ "$(ls packages | wc -l)" -eq 2 ] || { echo "::error::Expected exactly the package and its symbols."; exit 1; }
 

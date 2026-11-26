@@ -24,20 +24,20 @@ jobs:
       dotnet-version: 11.0
 
    - name: Build (Debug)
-     run: dotnet build RDCore.SDK.slnx --configuration Debug
+     run: dotnet build RDCore.SDK.Protocols.slnx --configuration Debug
 
    - name: Test (Debug) + coverage
      run: |
        dotnet tool install --global dotnet-coverage
        dotnet-coverage collect \
-         "dotnet test RDCore.SDK.slnx --configuration Debug --no-build --verbosity normal" \
+         "dotnet test RDCore.SDK.Protocols.slnx --configuration Debug --no-build --verbosity normal" \
          --output-format cobertura --output coverage.cobertura.xml
 
    - name: Build (Release)
-     run: dotnet build RDCore.SDK.slnx --configuration Release
+     run: dotnet build RDCore.SDK.Protocols.slnx --configuration Release
 
    - name: Test (Release)
-     run: dotnet test RDCore.SDK.slnx --configuration Release --no-build --verbosity normal
+     run: dotnet test RDCore.SDK.Protocols.slnx --configuration Release --no-build --verbosity normal
 
    - name: Coverage badge
      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
@@ -47,10 +47,10 @@ jobs:
        # instruments), and none of the code generated at build time (resx designers, regex generators).
        reportgenerator -reports:coverage.cobertura.xml -targetdir:coverage-report \
          -reporttypes:JsonSummary \
-         "-assemblyfilters:+RDCore.SDK;+RDCore.SDK.Protocol" \
+         "-assemblyfilters:+RDCore.SDK.Protocols" \
          "-filefilters:-*/obj/*;-*\\obj\\*"
        pct=$(grep -m1 -oE '"linecoverage": [0-9.]+' coverage-report/Summary.json | grep -oE '[0-9.]+$')
-       echo "RDCore.SDK line coverage: ${pct}%"
+       echo "RDCore.SDK.Protocols line coverage: ${pct}%"
        mkdir badge
        # one shields.io endpoint file per badge: the overall one, and one per project (coverage-<assembly>.json)
        badge() {
@@ -99,16 +99,16 @@ jobs:
       dotnet-version: 11.0
 
    - name: Build (Debug)
-     run: dotnet build RDCore.SDK.slnx --configuration Debug
+     run: dotnet build RDCore.SDK.Protocols.slnx --configuration Debug
 
    - name: Test (Debug)
-     run: dotnet test RDCore.SDK.slnx --configuration Debug --no-build --verbosity normal
+     run: dotnet test RDCore.SDK.Protocols.slnx --configuration Debug --no-build --verbosity normal
 
    - name: Build (Release)
-     run: dotnet build RDCore.SDK.slnx --configuration Release
+     run: dotnet build RDCore.SDK.Protocols.slnx --configuration Release
 
    - name: Test (Release)
-     run: dotnet test RDCore.SDK.slnx --configuration Release --no-build --verbosity normal
+     run: dotnet test RDCore.SDK.Protocols.slnx --configuration Release --no-build --verbosity normal
 
  # the only job that can write to the repo: it runs none of the repo's code, just pushes the badge files built above
  badge:

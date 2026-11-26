@@ -14,8 +14,8 @@
     <CopyrightYear>2026</CopyrightYear>
     <Copyright>Copyright © $(CopyrightYear) $(Authors)</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageProjectUrl>https://github.com/rubberduck-vba/RDCore.SDK</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/rubberduck-vba/RDCore.SDK</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/rubberduck-vba/RDCore.SDK.Protocols</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/rubberduck-vba/RDCore.SDK.Protocols</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>VBA;VB6;MS-VBAL;RDCore;Rubberduck;LSP;language-server</PackageTags>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>

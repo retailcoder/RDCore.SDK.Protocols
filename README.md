@@ -1,4 +1,4 @@
-# RDCore.SDK
+# RDCore.SDK.Protocols
 <sup>_Ce document est disponible en [français](./README.fr.md)_</sup>
 
 ![VIVAT CUCUMIS](./assets/vivat-cucumis-stonecore.png)
@@ -7,44 +7,37 @@
 > 👋 Hi! New here? _Rubberduck_ was always an open-source initiative. **RDCore honors it with an Open-Core formula**.  
 > <small>See [rubberduckvba.ca](https://rubberduckvba.ca) for more information.</small>
 
-This repository holds the [**RDCore.SDK**](https://www.nuget.org/packages/RDCore.SDK) package of the [RDCore](https://github.com/rubberduck-vba/RDCore) platform, licensed under **⚖️MIT**. The package holds these libraries, each an assembly of its own:
+This repository holds the [**RDCore.SDK.Protocols**](https://www.nuget.org/packages/RDCore.SDK.Protocols) package of the [RDCore](https://github.com/rubberduck-vba/RDCore) platform, licensed under **⚖️MIT**. It is what a client of the platform needs and nothing else: the `rdcore/*` methods and their messages, the platform handshake, how to start the language server, and the files of the languages the platform serves. It uses the .NET base library only, with no OmniSharp. HexIDE's RDCore add-in references it.
 
-- **RDCore.SDK**: the language model (MS-VBAL types, symbols, syntax trees, semantics and diagnostics) and the plumbing every platform component shares (hosting, configuration, logging, workspaces, the server and client app bases). Every RDCore component and extension builds on it.
-- **RDCore.SDK.Protocol**: what a client of the platform needs and nothing else. It holds the `rdcore/*` methods and their messages, the platform handshake, and how to start the language server. It uses System.Text.Json only, with no OmniSharp. HexIDE's RDCore add-in references it.
+The [RDCore.SDK](https://github.com/rubberduck-vba/RDCore.SDK) package, the language model and the plumbing every platform component shares, depends on this one. The platform built on them, the RD-VBA runtime included, lives in the [RDCore](https://github.com/rubberduck-vba/RDCore) repository, under **⚖️GPLv3 or later**. What you build with RDCore is yours (see [RDCore's NOTICE](https://github.com/rubberduck-vba/RDCore/blob/main/NOTICE.md)).
 
-The platform built on these libraries, the RD-VBA runtime included, lives in the [RDCore](https://github.com/rubberduck-vba/RDCore) repository, under **⚖️GPLv3 or later**. What you build with RDCore is yours (see [RDCore's NOTICE](https://github.com/rubberduck-vba/RDCore/blob/main/NOTICE.md)).
-
-The MIT license in [LICENSE](LICENSE) covers the libraries of this repository. A French version of the license is available on request. [NOTICE.md](NOTICE.md) names the third-party code the libraries include, with its license.
+The MIT license in [LICENSE](LICENSE) covers the library of this repository. A French version of the license is available on request. [NOTICE.md](NOTICE.md) is the library's notice.
 
 ## 📊 Project Status
-These libraries are in **alpha**: their API will still change before 1.0.
+This library is in **alpha**: its API will still change before 1.0.
 
 **Contributions**  
 
 - Individuals: ✅ Open ([CLA](CLA.md))  
 - Corporate: ⏳ Planned  
 
-[![NuGet](https://img.shields.io/nuget/vpre/RDCore.SDK)](https://www.nuget.org/packages/RDCore.SDK)
-[![Build and Test](https://github.com/rubberduck-vba/RDCore.SDK/actions/workflows/build.yml/badge.svg)](https://github.com/rubberduck-vba/RDCore.SDK/actions/workflows/build.yml)
-[![Coverage](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/rubberduck-vba/RDCore.SDK/badges/coverage.json)](https://github.com/rubberduck-vba/RDCore.SDK/actions/workflows/build.yml)
-
-| Library | Role | Coverage |
-|---|---|---|
-| **RDCore.SDK** | Language core + shared plumbing | [![RDCore.SDK](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/rubberduck-vba/RDCore.SDK/badges/coverage-RDCore.SDK.json)](https://github.com/rubberduck-vba/RDCore.SDK/actions/workflows/build.yml) |
-| **RDCore.SDK.Protocol** | The client-facing protocol, without OmniSharp | [![RDCore.SDK.Protocol](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/rubberduck-vba/RDCore.SDK/badges/coverage-RDCore.SDK.Protocol.json)](https://github.com/rubberduck-vba/RDCore.SDK/actions/workflows/build.yml) |
+[![NuGet](https://img.shields.io/nuget/vpre/RDCore.SDK.Protocols)](https://www.nuget.org/packages/RDCore.SDK.Protocols)
+[![Build and Test](https://github.com/rubberduck-vba/RDCore.SDK.Protocols/actions/workflows/build.yml/badge.svg)](https://github.com/rubberduck-vba/RDCore.SDK.Protocols/actions/workflows/build.yml)
+[![Coverage](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/rubberduck-vba/RDCore.SDK.Protocols/badges/coverage.json)](https://github.com/rubberduck-vba/RDCore.SDK.Protocols/actions/workflows/build.yml)
 
 ## Building
 
 From the repository root, with the .NET 11 SDK:
 
 ```
-dotnet build RDCore.SDK.slnx
-dotnet test RDCore.SDK.slnx
+dotnet build RDCore.SDK.Protocols.slnx
+dotnet test RDCore.SDK.Protocols.slnx
 ```
 
 ---
 ### See also
-- [The SDK's API reference](https://rubberduck-vba.github.io/RDCore.SDK/api/RDCore.SDK.html)
+- [The API reference](https://rubberduck-vba.github.io/RDCore.SDK.Protocols/api/RDCore.SDK.html)
+- [RDCore.SDK](https://github.com/rubberduck-vba/RDCore.SDK)
 - [RDCore](https://github.com/rubberduck-vba/RDCore)
 - [CONTRIBUTING.md](CONTRIBUTING.md)
 - [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)
