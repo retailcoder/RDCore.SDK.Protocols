@@ -39,7 +39,7 @@ namespace RDCore.SDK.Assistant {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("RDCore.SDK.Protocol.Assistant.McpMessages", typeof(McpMessages).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("RDCore.SDK.Protocols.Assistant.McpMessages", typeof(McpMessages).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

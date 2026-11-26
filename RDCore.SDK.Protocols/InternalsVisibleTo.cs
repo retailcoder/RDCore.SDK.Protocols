@@ -1,3 +1,3 @@
 using System.Runtime.CompilerServices;
 
-[assembly: InternalsVisibleTo("RDCore.SDK.Tests")]
+[assembly: InternalsVisibleTo("RDCore.SDK.Protocols.Tests")]

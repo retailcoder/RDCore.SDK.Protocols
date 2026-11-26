@@ -39,7 +39,7 @@ namespace RDCore.SDK.Client {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("RDCore.SDK.Protocol.Client.LaunchMessages", typeof(LaunchMessages).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("RDCore.SDK.Protocols.Client.LaunchMessages", typeof(LaunchMessages).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

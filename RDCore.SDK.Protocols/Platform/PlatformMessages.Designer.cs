@@ -39,7 +39,7 @@ namespace RDCore.SDK.Platform {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("RDCore.SDK.Protocol.Platform.PlatformMessages", typeof(PlatformMessages).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("RDCore.SDK.Protocols.Platform.PlatformMessages", typeof(PlatformMessages).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
