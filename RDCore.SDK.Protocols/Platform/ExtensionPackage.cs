@@ -229,8 +229,9 @@ public static class ExtensionPackage
     /// <param name="zip">The package's path.</param>
     /// <param name="target">The platform it is installed into.</param>
     /// <param name="force">Whether a version earlier than the installed one replaces it.</param>
-    /// <returns>What the install did, or why it did not install: nothing is written but for <see cref="ExtensionInstallOutcome.Installed"/>
-    /// and <see cref="ExtensionInstallOutcome.Replaced"/>.</returns>
+    /// <returns>What the install did, or why it did not install: no extension is added or replaced but for
+    /// <see cref="ExtensionInstallOutcome.Installed"/> and <see cref="ExtensionInstallOutcome.Replaced"/>. An install that reaches
+    /// <see cref="ExtensionInstallOutcome.InUse"/> has also deleted the leftovers of earlier ones (<see cref="SweepLeftovers"/>).</returns>
     /// <exception cref="InvalidDataException">The zip is not one, or its manifest is longer than <see cref="ExtensionPackageManifest.MaxBytes"/>
     /// or not an extension manifest.</exception>
     /// <exception cref="IOException">The zip cannot be read, or the extension's folder cannot be written.</exception>
@@ -303,7 +304,7 @@ public static class ExtensionPackage
     /// <param name="target">The platform.</param>
     /// <param name="title">The extension's title, the name of its folder, in any case.</param>
     /// <returns>What the removal did, or why it did not remove the extension.</returns>
-    /// <exception cref="IOException">The folder cannot be moved aside for another reason than a process that runs from it.</exception>
+    /// <exception cref="IOException">The <c>Extensions</c> folder cannot be read.</exception>
     public static ExtensionRemoveOutcome Remove(ExtensionTarget target, string title)
     {
         ArgumentNullException.ThrowIfNull(target);
@@ -353,7 +354,7 @@ public static class ExtensionPackage
     /// <param name="fromExtensionsFolder">The current version's <c>Extensions</c> folder.</param>
     /// <param name="into">The version being deployed: its <c>Extensions</c> folder, under its <see cref="SharedPlatformRoot.PartialRoot"/>.</param>
     /// <returns>The extensions copied, and those left behind: built against an RDCore.SDK incompatible with the new version's, or for
-    /// another system. An extension whose manifest cannot be read is neither.</returns>
+    /// another system. An extension whose manifest cannot be read, or whose folder is not named by its title, is neither.</returns>
     /// <exception cref="IOException">An extension cannot be copied.</exception>
     public static CarriedExtensions CarryForward(string fromExtensionsFolder, ExtensionTarget into)
     {
