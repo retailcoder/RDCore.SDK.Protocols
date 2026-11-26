@@ -109,7 +109,8 @@ public sealed class ModuleHeaderTests
     [DataRow("\r\n  version 5.00\r\n   begin VB.PropertyPage General\r\n   end\r\n", 3, DisplayName = "an End in any case and indentation")]
     [DataRow("VERSION 5.00\r\nBegin VB.Form F\r\n   BeginProperty Font\r\n      End\r\n   EndProperty\r\nEnd\r\n", 5,
         DisplayName = "an End inside a property group is the property's")]
-    [DataRow("VERSION 5.00\r\nBegin VB.Form Broken\r\n   Caption = \"Broken\"\r\nAttribute VB_Name = \"Broken\"\r\n", null, DisplayName = "a block never closed")]
+    [DataRow("VERSION 5.00\r\nBegin VB.Form Broken\r\n   Caption = \"Broken\"\r\nAttribute VB_Name = \"Broken\"\r\n", null,
+        DisplayName = "a block never closed")]
     [DataRow("VERSION 5.00\r\nBegin VB.Form F\r\n   Begin VB.Label L\r\n   End\r\n", null, DisplayName = "a control's End does not close the form's block")]
     public void DesignerOf_EndLine_IsTheEndThatClosesTheDesignerBlock(string source, int? endLine)
     {
