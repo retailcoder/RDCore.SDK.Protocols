@@ -126,4 +126,10 @@
   <data name="ReleaseManifestIsTooLarge" xml:space="preserve">
     <value>Le manifeste de publication '{0}' fait {1} octets; le plus grand qui soit lu fait {2} octets.</value>
   </data>
+  <data name="ExtensionManifestIsNotOne" xml:space="preserve">
+    <value>Le fichier '{0}' n'est pas un manifeste d'extension : {1}</value>
+  </data>
+  <data name="ExtensionManifestIsTooLarge" xml:space="preserve">
+    <value>Le manifeste d'extension '{0}' fait {1} octets; le plus grand qui soit lu fait {2} octets.</value>
+  </data>
 </root>
