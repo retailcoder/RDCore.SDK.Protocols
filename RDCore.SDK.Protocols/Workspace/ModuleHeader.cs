@@ -1,5 +1,6 @@
 using System.Text.RegularExpressions;
 using RDCore.SDK.Model.Source;
+using RDCore.SDK.Workspace.Forms;
 
 namespace RDCore.SDK.Workspace;
 
@@ -117,6 +118,64 @@ public static partial class ModuleHeader
         return Math.Min(line, lines.Length - 1);
     }
 
+    /// <summary>
+    /// The designer <paramref name="source"/>'s header names: the <c>Begin &lt;class&gt; &lt;name&gt;</c> line that opens a designer module's designer
+    /// block, which is what makes the module a form, an MDI form, a user control or a property page of Visual Basic 6.0 (<c>VB.Form</c>,
+    /// <c>VB.MDIForm</c>, <c>VB.UserControl</c>, <c>VB.PropertyPage</c>), or a VBA UserForm.
+    /// </summary>
+    /// <remarks>
+    /// The header is a <c>VERSION</c> line (<c>VERSION 5.00</c>) on the text's first line that is not blank; then the <c>Object</c> lines of the ActiveX
+    /// controls a Visual Basic 6.0 designer uses, and blank lines; then the <c>Begin</c> line. A class module's header names no designer: its
+    /// <c>VERSION 1.0 CLASS</c> is followed by <c>BEGIN</c> alone. A Microsoft Forms class identifier names a UserForm, whose class is
+    /// <c>MSForms.UserForm</c> (<see cref="FormControlClass.MSFormsDesignerClassId"/>); any other is the class identifier alone. Lines are split as
+    /// <see cref="NameRangeOf"/> splits them.
+    /// </remarks>
+    /// <param name="source">The module file's text, or <c>null</c> when it could not be read.</param>
+    /// <returns>
+    /// The designer, its class, the name it gives the form, and where; or <c>null</c> when the text has no such header: a standard or class module, or no
+    /// text.
+    /// </returns>
+    public static DesignerHeader? DesignerOf(string? source)
+    {
+        var lines = LinesOf(source);
+        var index = 0;
+        while (index < lines.Length && string.IsNullOrWhiteSpace(lines[index]))
+        {
+            index++;
+        }
+
+        if (index == lines.Length || !DesignerVersionLine().IsMatch(lines[index]))
+        {
+            return null;
+        }
+
+        for (index++; index < lines.Length; index++)
+        {
+            var line = lines[index].Trim();
+            if (line.Length > 0 && !line.StartsWith("Object", StringComparison.OrdinalIgnoreCase))
+            {
+                break;
+            }
+        }
+
+        if (index == lines.Length || DesignerBeginLine().Match(lines[index]) is not { Success: true } begin)
+        {
+            return null;
+        }
+
+        var name = begin.Groups["name"];
+        return new DesignerHeader(DesignerClassOf(begin.Groups["class"].Value), name.Value, index, name.Index);
+    }
+
+    // a designer's class as its Begin line writes it; the Microsoft Forms designer's class identifier is a UserForm's
+    private static FormControlClass DesignerClassOf(string token)
+    {
+        var @class = FormControlClass.Parse(token);
+        return @class.ClassId == FormControlClass.MSFormsDesignerClassId
+            ? @class with { Library = FormControlClass.MSFormsLibrary, Name = "UserForm" }
+            : @class;
+    }
+
     private static string[] LinesOf(string? source) => string.IsNullOrEmpty(source) ? [] : source.Split('\n');
 
     // a line that opens a block of the header: BEGIN, or Begin and what it describes; BeginProperty opens a property group inside a block
@@ -135,4 +194,13 @@ public static partial class ModuleHeader
     [GeneratedRegex(@"^[ \t]*VERSION[ \t]+[0-9]+(?:\.[0-9]+)?(?:[ \t]+CLASS)?[ \t]*\r?$",
         RegexOptions.Multiline | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant)]
     private static partial Regex VersionHeader();
+
+    // a designer module's VERSION line (VERSION 5.00), alone on the first line of its text that is not blank
+    [GeneratedRegex(@"^[ \t]*VERSION[ \t]+[0-9]+(?:\.[0-9]+)?[ \t]*\r?$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant)]
+    private static partial Regex DesignerVersionLine();
+
+    // the line that opens a designer block, or a control's block inside it: Begin, then a class (VB.Form, a bare name, a {CLSID}), then a name
+    [GeneratedRegex(@"^[ \t]*Begin[ \t]+(?<class>\{[0-9A-Fa-f-]+\}|[A-Za-z_][A-Za-z0-9_]*(?:\.[A-Za-z_][A-Za-z0-9_]*)?)"
+        + @"[ \t]+(?<name>[A-Za-z_][A-Za-z0-9_]*)[ \t]*\r?$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant)]
+    private static partial Regex DesignerBeginLine();
 }
