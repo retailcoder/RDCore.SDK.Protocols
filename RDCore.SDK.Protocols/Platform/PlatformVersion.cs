@@ -44,14 +44,14 @@ public sealed record PlatformVersion : IComparable<PlatformVersion>
     public string Text { get; }
 
     /// <summary>
-    /// Whether a part built with this RDCore.SDK version and a part built with <paramref name="other"/> work together: the same major and
-    /// minor versions before 1.0, and the same major version from 1.0.
+    /// Whether a part built with this version of an RDCore package and a part built with <paramref name="other"/> work together: the same major
+    /// and minor versions before 1.0, and the same major version from 1.0. RDCore.SDK and RDCore.SDK.Protocols versions compare the same way.
     /// </summary>
     /// <remarks>
     /// The rule is symmetric, and ignores the patch number and the prerelease identifiers: <c>0.1.1-alpha</c> works with <c>0.1.0</c>, and
     /// not with <c>0.2.0</c>; <c>1.2.0</c> works with <c>1.0.0</c>, and not with <c>2.0.0</c>.
     /// </remarks>
-    /// <param name="other">The other part's RDCore.SDK version.</param>
+    /// <param name="other">The other part's version of an RDCore package.</param>
     public bool IsCompatibleWith(PlatformVersion other)
     {
         ArgumentNullException.ThrowIfNull(other);
