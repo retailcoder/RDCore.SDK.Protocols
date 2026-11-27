@@ -114,6 +114,17 @@ public record class ExecuteResult
     public string ErrorMessage { get; init; } = string.Empty;
 
     /// <summary>
+    /// What the run-time error says beyond its description (<see cref="ErrorMessage"/>), as plain text: the case it was raised in, such as the form that
+    /// was still loaded when a run that nobody attends ended. A client shows it under the description. <see langword="null"/> when the error says nothing
+    /// more, and when the run raised no run-time error.
+    /// </summary>
+    /// <remarks>
+    /// For an error the runtime recorded <see cref="ErrorDetails"/> of, it is their <see cref="VBErrorDetails.Message"/>: what a client that formats no
+    /// details shows. <see cref="ErrorMessage"/> stays the description alone, which is what <c>Err.Description</c> reports.
+    /// </remarks>
+    public string? ErrorVerbose { get; init; }
+
+    /// <summary>
     /// The run-time error's <strong>RD-VBAL §2.6.3</strong> diagnostic code — <c>VBR</c> for one the
     /// runtime semantics reported, <c>VBA</c> for one the program raised itself with <c>Error</c> or
     /// <c>Err.Raise</c>. Empty for any other outcome.

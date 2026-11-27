@@ -86,5 +86,23 @@ namespace RDCore.SDK.Platform {
                 return ResourceManager.GetString("ReleaseManifestIsTooLarge", resourceCulture);
             }
         }
+
+        /// <summary>
+        ///   Looks up a localized string similar to The file &apos;{0}&apos; is not an extension manifest: {1}.
+        /// </summary>
+        internal static string ExtensionManifestIsNotOne {
+            get {
+                return ResourceManager.GetString("ExtensionManifestIsNotOne", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to The extension manifest &apos;{0}&apos; is {1} bytes long; the largest that is read is {2} bytes..
+        /// </summary>
+        internal static string ExtensionManifestIsTooLarge {
+            get {
+                return ResourceManager.GetString("ExtensionManifestIsTooLarge", resourceCulture);
+            }
+        }
     }
 }

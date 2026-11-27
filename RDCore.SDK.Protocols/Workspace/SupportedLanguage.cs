@@ -138,6 +138,24 @@ public class SupportedLanguage
             : ImplicitReferences;
 
     /// <summary>
+    /// The libraries, by name, that a project of the language with these modules references after the ones its project file lists, without the project
+    /// file listing them (<strong>RD-VBAL §2.3.1.3</strong>): Windows Script Host's, the implicit references of <see cref="SupportedLanguages.VBScript"/>
+    /// (<c>IHost</c>, then <c>IWshRuntimeLibrary</c>), when a module is a script (<c>.vbs</c>).
+    /// </summary>
+    /// <remarks>
+    /// A script names <c>WScript</c> in a project of another language as it does in a VBScript project. The libraries come after the ones the project
+    /// file lists, so a name they declare does not shadow a listed library's: both carry the Scripting runtime's <c>FileSystemObject</c>, <c>File</c>,
+    /// <c>Folder</c>, <c>Drive</c> and <c>TextStream</c>, and a project that lists <c>Scripting</c> keeps its classes. A library that is among the
+    /// language's own (<see cref="ImplicitReferences"/>) is not repeated.
+    /// </remarks>
+    /// <param name="modulePaths">The paths or relative URIs of the project's modules (<see cref="RDCoreFile.RelativeUri"/>).</param>
+    /// <returns>The names; none when no module is a script, or when the language has the libraries among its own.</returns>
+    public IReadOnlyList<string> TrailingImplicitReferencesOf(IEnumerable<string?> modulePaths)
+        => modulePaths.Any(path => path is not null && SupportedLanguages.VBScript.IsSourceFile(path))
+            ? [.. SupportedLanguages.VBScript.ImplicitReferences.Where(name => !ImplicitReferences.Contains(name, StringComparer.OrdinalIgnoreCase))]
+            : [];
+
+    /// <summary>
     /// Whether a file is written in the language: whether its extension is the extension of one of its <see cref="FileTypes"/>.
     /// </summary>
     /// <remarks>
@@ -225,8 +243,9 @@ public static class SupportedLanguages
     /// Its source is a script (<c>.vbs</c>): a text file with no header. A project of the language references the two libraries of Windows Script Host
     /// without its project file listing them: <c>IHost</c>, the type library of <c>wscript.exe</c>, whose <c>WScript</c> object every script names, and
     /// <c>IWshRuntimeLibrary</c> (Windows Script Host Object Model, <c>wshom.ocx</c>), whose <c>WshShell</c> a script creates with
-    /// <c>CreateObject("WScript.Shell")</c>. Its statements outside procedures are the script, which a run runs from its first line to its last
-    /// (<see cref="SupportedLanguage.HasFileLevelStatements"/>).
+    /// <c>CreateObject("WScript.Shell")</c>. A project of another language that has a script references them too, after the references its project file
+    /// lists (<see cref="SupportedLanguage.TrailingImplicitReferencesOf"/>). Its statements outside procedures are the script, which a run runs from its
+    /// first line to its last (<see cref="SupportedLanguage.HasFileLevelStatements"/>).
     /// </remarks>
     public static SupportedLanguage VBScript { get; } = new("vbscript", "Microsoft Visual Basic Scripting Edition", "*.vbs")
     {
