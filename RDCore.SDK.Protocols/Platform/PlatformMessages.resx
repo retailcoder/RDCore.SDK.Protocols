@@ -129,4 +129,12 @@
     <value>The release manifest '{0}' is {1} bytes long; the largest that is read is {2} bytes.</value>
     <comment>{0}: the path of release.json; {1}: its size; {2}: the largest size read.</comment>
   </data>
+  <data name="ExtensionManifestIsNotOne" xml:space="preserve">
+    <value>The file '{0}' is not an extension manifest: {1}</value>
+    <comment>{0}: the path of extension.manifest.json, in its folder or its package; {1}: what the JSON reader said.</comment>
+  </data>
+  <data name="ExtensionManifestIsTooLarge" xml:space="preserve">
+    <value>The extension manifest '{0}' is {1} bytes long; the largest that is read is {2} bytes.</value>
+    <comment>{0}: the path of extension.manifest.json; {1}: its size; {2}: the largest size read.</comment>
+  </data>
 </root>
