@@ -16,10 +16,11 @@ public sealed class ListSettingValueResultTests
     [DataRow(false, "The item is not yours to remove.", DisplayName = "not applied, with its reason")]
     public void AResult_IsReadBackAsItWasWritten(bool applied, string? reason)
     {
-        var result = new ListSettingValueResult { Applied = applied, Reason = reason };
+        var json = JsonSerializer.Serialize(new ListSettingValueResult { Applied = applied, Reason = reason }, RDCorePlatformJson.Options);
 
-        var read = JsonSerializer.Deserialize<ListSettingValueResult>(JsonSerializer.Serialize(result, RDCorePlatformJson.Options), RDCorePlatformJson.Options);
+        var read = JsonSerializer.Deserialize<ListSettingValueResult>(json, RDCorePlatformJson.Options)!;
 
-        Assert.AreEqual(result, read);
+        Assert.AreEqual(applied, read.Applied);
+        Assert.AreEqual(reason, read.Reason);
     }
 }
