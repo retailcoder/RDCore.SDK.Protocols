@@ -138,15 +138,15 @@ public class SupportedLanguage
             : ImplicitReferences;
 
     /// <summary>
-    /// The libraries a project of the language with these modules references without its project file listing them, by name, that come after the references
-    /// its project file lists (<strong>RD-VBAL §2.3.1.3</strong>): Windows Script Host's, the implicit references of <see cref="SupportedLanguages.VBScript"/>
+    /// The libraries, by name, that a project of the language with these modules references after the ones its project file lists, without the project
+    /// file listing them (<strong>RD-VBAL §2.3.1.3</strong>): Windows Script Host's, the implicit references of <see cref="SupportedLanguages.VBScript"/>
     /// (<c>IHost</c>, then <c>IWshRuntimeLibrary</c>), when a module is a script (<c>.vbs</c>).
     /// </summary>
     /// <remarks>
-    /// A script names <c>WScript</c> in a project that has modules other than scripts as it does in a project of scripts. The libraries come after the ones
-    /// the project file lists, so a name they declare does not shadow a listed library's: both carry the Scripting runtime's <c>FileSystemObject</c>,
-    /// <c>File</c>, <c>Folder</c>, <c>Drive</c> and <c>TextStream</c>, and a project that lists <c>Scripting</c> keeps its classes. In a project whose
-    /// language has them already (<see cref="ImplicitReferencesOf"/>), they are not repeated.
+    /// A script names <c>WScript</c> in a project of another language as it does in a VBScript project. The libraries come after the ones the project
+    /// file lists, so a name they declare does not shadow a listed library's: both carry the Scripting runtime's <c>FileSystemObject</c>, <c>File</c>,
+    /// <c>Folder</c>, <c>Drive</c> and <c>TextStream</c>, and a project that lists <c>Scripting</c> keeps its classes. A library that is among the
+    /// language's own (<see cref="ImplicitReferences"/>) is not repeated.
     /// </remarks>
     /// <param name="modulePaths">The paths or relative URIs of the project's modules (<see cref="RDCoreFile.RelativeUri"/>).</param>
     /// <returns>The names; none when no module is a script, or when the language has the libraries among its own.</returns>
