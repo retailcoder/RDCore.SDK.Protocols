@@ -22,7 +22,7 @@ public static class RDCoreSdk
     /// RDCore.SDK.Protocols and RDCore.SDK are versioned apart, and an RDCore.SDK depends on an RDCore.SDK.Protocols of its own major and minor
     /// version: the two are compatible (<see cref="PlatformVersion.IsCompatibleWith"/>). A client that references RDCore.SDK.Protocols alone, as an
     /// IDE's add-in does, compares this version with the RDCore.SDK a platform was built with (<see cref="PlatformReleaseManifest.IsBuiltWith"/>).
-    /// RDCore.SDK's own version is <see cref="VersionOf"/> one of its assemblies.
+    /// RDCore.SDK's own version is what <see cref="VersionOf"/> gives for one of its assemblies.
     /// </remarks>
     public static PlatformVersion Version { get; } = VersionOf(typeof(RDCoreSdk).Assembly);
 

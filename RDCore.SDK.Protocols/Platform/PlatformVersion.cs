@@ -45,7 +45,7 @@ public sealed record PlatformVersion : IComparable<PlatformVersion>
 
     /// <summary>
     /// Whether a part built with this version of an RDCore package and a part built with <paramref name="other"/> work together: the same major
-    /// and minor versions before 1.0, and the same major version from 1.0. RDCore.SDK and RDCore.SDK.Protocols versions compare the same way.
+    /// and minor versions before 1.0, and the same major version from 1.0. A version of RDCore.SDK and one of RDCore.SDK.Protocols compare by this rule.
     /// </summary>
     /// <remarks>
     /// The rule is symmetric, and ignores the patch number and the prerelease identifiers: <c>0.1.1-alpha</c> works with <c>0.1.0</c>, and
