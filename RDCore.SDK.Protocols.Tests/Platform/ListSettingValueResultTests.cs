@@ -5,7 +5,7 @@ using System.Text.Json;
 namespace RDCore.Tests.Platform;
 
 /// <summary>
-/// What a client answers a change of a list with travels whole: why it did not apply the change, when it says why.
+/// A client's answer to a change of a list reads back as it was written, with why the change was not applied when the client says why.
 /// </summary>
 [TestClass]
 public sealed class ListSettingValueResultTests
