@@ -72,4 +72,10 @@ public record class ListSettingValueResult
     /// the setting.
     /// </summary>
     public bool Applied { get; init; }
+
+    /// <summary>
+    /// Why the change was not applied, in the client's language, for the language server to show; <see langword="null"/> when it was applied, or when the
+    /// client says nothing more than that it was not.
+    /// </summary>
+    public string? Reason { get; init; }
 }
