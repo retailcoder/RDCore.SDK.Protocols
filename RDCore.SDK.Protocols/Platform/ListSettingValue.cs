@@ -74,8 +74,8 @@ public record class ListSettingValueResult
     public bool Applied { get; init; }
 
     /// <summary>
-    /// Why the change was not applied, in the client's language, for the language server to show; <see langword="null"/> when it was applied, or when the
-    /// client says nothing more than that it was not.
+    /// Why the change was not applied, written in the language the client shows the user, for the language server to show; <see langword="null"/> when it
+    /// was applied, or when the client says nothing more than that it was not.
     /// </summary>
     public string? Reason { get; init; }
 }
