@@ -22,8 +22,8 @@ public sealed record class ProgramInvocationResult
     public bool HasValue { get; init; }
 
     /// <summary>
-    /// The value the procedure returned, as JSON: a <see langword="null"/> node for <c>Empty</c>, <c>Null</c> and <c>Nothing</c>, and when
-    /// <see cref="HasValue"/> is <see langword="false"/>.
+    /// The value the procedure returned, as JSON: <see langword="null"/>, written as JSON <c>null</c>, for <c>Empty</c>, <c>Null</c> and <c>Nothing</c>,
+    /// and when <see cref="HasValue"/> is <see langword="false"/>.
     /// </summary>
     public JsonNode? Value { get; init; }
 
@@ -40,8 +40,8 @@ public sealed record class ProgramInvocationResult
     public string ErrorMessage { get; init; } = string.Empty;
 
     /// <summary>
-    /// The RD-VBAL §2.6.3 diagnostic code of the run-time error (<c>VBR</c> for one the runtime raised, <c>VBA</c> for one the program raised); empty for any
-    /// other outcome.
+    /// The <strong>RD-VBAL §2.6.3</strong> diagnostic code of the run-time error (<c>VBR</c> for one the runtime raised, <c>VBA</c> for one the program
+    /// raised); empty for any other outcome.
     /// </summary>
     public string ErrorCode { get; init; } = string.Empty;
 
@@ -63,13 +63,14 @@ public sealed record class ProgramInvocationResult
     /// </summary>
     /// <param name="number">The error's number, as <c>Err.Number</c> reports it.</param>
     /// <param name="description">The error's description, as <c>Err.Description</c> reports it.</param>
-    /// <param name="code">The error's RD-VBAL §2.6.3 diagnostic code.</param>
+    /// <param name="code">The error's <strong>RD-VBAL §2.6.3</strong> diagnostic code.</param>
     /// <returns>A <see cref="ExecutionOutcome.RuntimeError"/> result.</returns>
     public static ProgramInvocationResult RuntimeError(int number, string description, string code)
         => new() { Outcome = ExecutionOutcome.RuntimeError, ErrorNumber = number, ErrorMessage = description, ErrorCode = code };
 
     /// <summary>
-    /// An invocation that ended otherwise: the procedure was not found, the program ended or was interrupted, or the machine refused it.
+    /// An invocation that ended otherwise, such as a procedure that was not found, a program that an <c>End</c> statement halted or that was interrupted,
+    /// or an invocation the machine refused.
     /// </summary>
     /// <param name="outcome">How it ended: neither <see cref="ExecutionOutcome.Completed"/> nor <see cref="ExecutionOutcome.RuntimeError"/>.</param>
     /// <param name="explanation">A short explanation of the outcome.</param>
