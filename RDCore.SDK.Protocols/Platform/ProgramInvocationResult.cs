@@ -8,8 +8,11 @@ namespace RDCore.SDK.Platform.Protocol;
 /// <remarks>
 /// A run-time error of the program is a result (<see cref="ExecutionOutcome.RuntimeError"/>), never an exception. So is an argument that does not convert to
 /// its parameter's type: run-time error 13 (Type mismatch).
+/// <para>
+/// RDCore.SDK derives its reply on the JSON-RPC wire from this type, and that reply carries the converter that writes <see cref="Value"/> as JSON.
+/// </para>
 /// </remarks>
-public sealed record class ProgramInvocationResult
+public record class ProgramInvocationResult
 {
     /// <summary>
     /// How the invocation ended.
