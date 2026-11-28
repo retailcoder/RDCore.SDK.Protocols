@@ -1,7 +1,16 @@
-# Dependabot opens a pull request each week for each action the workflows use that has a newer version, with its pinned commit and the version
-# in the comment beside it.
+# Dependabot opens pull requests each week for the packages and actions of RDCore.SDK.Protocols that have a newer version: one per group below, and
+# one per package otherwise. An action is pinned by its commit, with its version in the comment beside it. The package itself has no dependencies.
 version: 2
 updates:
+  - package-ecosystem: nuget
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      mstest:
+        patterns:
+          - "MSTest*"
+
   - package-ecosystem: github-actions
     directory: /
     schedule:
