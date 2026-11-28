@@ -223,6 +223,7 @@ public class LanguageServerCapabilities
 [JsonDerivedType(typeof(CliCommand))]
 [JsonDerivedType(typeof(DiagnoseDocument))]
 [JsonDerivedType(typeof(DiagnoseProject))]
+[JsonDerivedType(typeof(DiagnoseProjectModules))]
 [JsonDerivedType(typeof(SessionStatus))]
 [JsonDerivedType(typeof(SessionExecute))]
 [JsonDerivedType(typeof(SessionDiscard))]
@@ -426,6 +427,17 @@ public record class DiagnoseDocument(bool IsSupported = false) : CorePlatformCli
 /// </remarks>
 /// <param name="IsSupported">Whether the capability is provided.</param>
 public record class DiagnoseProject(bool IsSupported = false) : CorePlatformClientCapability(IsSupported);
+
+/// <summary>
+/// Advertises that the declaring extension answers <c>rdcore/diagnostics/projectModules</c>: it has analyzers that read every module of a project at once. The
+/// language server sends it every module of a project, and reports each finding against the module it is in.
+/// </summary>
+/// <remarks>
+/// Declared via <c>[assembly: ProvidesCorePlatformClientCapability&lt;DiagnoseProjectModules&gt;]</c>, and read from the extension's manifest as
+/// <see cref="DiagnoseDocument"/> is. An extension that has none of these analyzers does not declare it, and is not sent the modules of a project.
+/// </remarks>
+/// <param name="IsSupported">Whether the capability is provided.</param>
+public record class DiagnoseProjectModules(bool IsSupported = false) : CorePlatformClientCapability(IsSupported);
 
 /// <summary>
 /// Advertises that the declaring component contributes <c>rdc.exe</c> command-line verbs.

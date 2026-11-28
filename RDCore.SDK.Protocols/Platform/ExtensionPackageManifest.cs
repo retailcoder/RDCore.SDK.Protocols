@@ -50,6 +50,12 @@ public sealed record class ExtensionPackageManifest
     public string FileHash { get; init; } = string.Empty;
 
     /// <summary>
+    /// The base64 SHA-512 of each file of the extension's folder, the executable among them, by its path relative to the folder with
+    /// <c>/</c> between its folders; null when the manifest does not list them (<see cref="ExtensionFileHashes"/>).
+    /// </summary>
+    public IReadOnlyDictionary<string, string>? FileHashes { get; init; }
+
+    /// <summary>
     /// The RDCore.SDK version the extension was built against; null when the manifest does not say (<see cref="PlatformVersionJsonConverter"/>).
     /// </summary>
     [JsonConverter(typeof(PlatformVersionJsonConverter))]

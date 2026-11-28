@@ -44,24 +44,53 @@ public sealed class ExtensionPackageTests
         new(extensions ?? _extensions, Sdk, rid, PlatformManifest.DefaultCoreExtension);
 
     /// <summary>
-    /// An extension package to write: its manifest's members, its executable and one more file.
+    /// An extension package to write: its manifest's members, its executable and one more file, and the hashes its manifest lists of them,
+    /// which a test may leave out, make one of them different, list a file it does not hold, or hold a file it does not list or one twice.
     /// </summary>
     public sealed record Package(string Title = Title, string Version = "1.0.0.0", string? SdkVersion = "0.3.0", string? Rid = Rid,
         string Name = Executable, string Content = "host", string? Hash = null, bool WithExecutable = true, bool WithManifest = true,
-        string? ExtraEntry = "lib/RDCore.Web.dll");
+        string? ExtraEntry = "lib/RDCore.Web.dll", bool WithFileHashes = true, bool ExtraChanged = false, string? Missing = null,
+        string? Unlisted = null, bool ExtraTwice = false);
+
+    private static string HashOf(string content) => Convert.ToBase64String(SHA512.HashData(Encoding.UTF8.GetBytes(content)));
 
     // the manifest describe-ext writes, PascalCase, with the members an installer does not read.
-    private static string ManifestJson(Package package) => JsonSerializer.Serialize(new Dictionary<string, object?>
+    private static string ManifestJson(Package package)
     {
-        ["Name"] = package.Name,
-        ["Title"] = package.Title,
-        ["Version"] = package.Version,
-        ["Publisher"] = "Rubberduck VBA",
-        ["FileHash"] = package.Hash ?? Convert.ToBase64String(SHA512.HashData(Encoding.UTF8.GetBytes(package.Content))),
-        ["Capabilities"] = Array.Empty<object>(),
-        ["SdkVersion"] = package.SdkVersion,
-        ["RuntimeIdentifier"] = package.Rid,
-    });
+        var manifest = new Dictionary<string, object?>
+        {
+            ["Name"] = package.Name,
+            ["Title"] = package.Title,
+            ["Version"] = package.Version,
+            ["Publisher"] = "Rubberduck VBA",
+            ["FileHash"] = package.Hash ?? HashOf(package.Content),
+            ["Capabilities"] = Array.Empty<object>(),
+            ["SdkVersion"] = package.SdkVersion,
+            ["RuntimeIdentifier"] = package.Rid,
+        };
+        if (package.WithFileHashes)
+        {
+            var hashes = new Dictionary<string, string>();
+            if (package.WithExecutable)
+            {
+                hashes[package.Name] = HashOf(package.Content);
+            }
+
+            if (package.ExtraEntry is { } extra)
+            {
+                hashes[extra] = HashOf(package.ExtraChanged ? "library, changed" : "library");
+            }
+
+            if (package.Missing is { } missing)
+            {
+                hashes[missing] = HashOf("missing");
+            }
+
+            manifest["FileHashes"] = hashes;
+        }
+
+        return JsonSerializer.Serialize(manifest);
+    }
 
     private string Zip(Package package)
     {
@@ -86,6 +115,15 @@ public sealed class ExtensionPackageTests
         if (package.ExtraEntry is { } extra)
         {
             Add(extra, "library");
+            if (package.ExtraTwice)
+            {
+                Add(extra, "library");
+            }
+        }
+
+        if (package.Unlisted is { } unlisted)
+        {
+            Add(unlisted, "unlisted");
         }
 
         return path;
@@ -145,6 +183,11 @@ public sealed class ExtensionPackageTests
         [new Package(SdkVersion: "0.2.1"), ExtensionInstallOutcome.IncompatibleSdk],
         [new Package(SdkVersion: null), ExtensionInstallOutcome.IncompatibleSdk],
         [new Package(ExtraEntry: "../escaped.txt"), ExtensionInstallOutcome.UnsafeEntry],
+        [new Package(WithFileHashes: false), ExtensionInstallOutcome.ContentMismatch],
+        [new Package(ExtraChanged: true), ExtensionInstallOutcome.ContentMismatch],
+        [new Package(Missing: "lib/RDCore.Web.Core.dll"), ExtensionInstallOutcome.ContentMismatch],
+        [new Package(Unlisted: "lib/RDCore.Web.Core.dll"), ExtensionInstallOutcome.ContentMismatch],
+        [new Package(ExtraTwice: true), ExtensionInstallOutcome.ContentMismatch],
     ];
 
     [TestMethod]
@@ -286,6 +329,11 @@ public sealed class ExtensionPackageTests
         }
 
         File.WriteAllText(Path.Combine(folder, "lib", "RDCore.Web.dll"), "library");
+        if (package.Unlisted is { } unlisted)
+        {
+            File.WriteAllText(Path.Combine(folder, unlisted), "unlisted");
+        }
+
         return folder;
     }
 
@@ -333,6 +381,10 @@ public sealed class ExtensionPackageTests
         [new Package(WithManifest: false), ExtensionPackOutcome.NoManifest],
         [new Package(WithExecutable: false), ExtensionPackOutcome.ExecutableMissing],
         [new Package(Hash: "not the hash"), ExtensionPackOutcome.FileHashMismatch],
+        [new Package(WithFileHashes: false), ExtensionPackOutcome.ContentMismatch],
+        [new Package(ExtraChanged: true), ExtensionPackOutcome.ContentMismatch],
+        [new Package(Missing: "lib/RDCore.Web.Core.dll"), ExtensionPackOutcome.ContentMismatch],
+        [new Package(Unlisted: "lib/RDCore.Web.Core.dll"), ExtensionPackOutcome.ContentMismatch],
     ];
 
     [TestMethod]
@@ -349,6 +401,25 @@ public sealed class ExtensionPackageTests
 
         Assert.AreEqual(refused, ExtensionPackage.Pack(folder, zip));
         Assert.IsFalse(File.Exists(zip));
+    }
+
+    // the manifest holds the hashes, so it is not among them; a file in a subfolder is named with a slash on every system.
+    [TestMethod]
+    public void TheHashesOfAFolder_AreThoseOfEveryFileButItsManifest_ByItsPathInTheFolder()
+    {
+        var hashes = ExtensionFileHashes.Of(DescribedFolder(new()));
+
+        CollectionAssert.AreEquivalent(
+            new[] { $"{Executable}={HashOf("host")}", $"lib/RDCore.Web.dll={HashOf("library")}" },
+            hashes.Select(file => $"{file.Key}={file.Value}").ToArray());
+    }
+
+    [TestMethod]
+    public void AManifestsFileHashes_AreRead()
+    {
+        var manifest = ExtensionPackage.ReadManifest(Zip(new()));
+
+        Assert.AreEqual(HashOf("library"), manifest?.FileHashes?["lib/RDCore.Web.dll"]);
     }
 
     [TestMethod]

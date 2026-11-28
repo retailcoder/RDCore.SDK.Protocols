@@ -1,5 +1,4 @@
 using System.IO.Compression;
-using System.Security.Cryptography;
 
 namespace RDCore.SDK.Platform;
 
@@ -53,6 +52,11 @@ public enum ExtensionInstallOutcome
     /// </summary>
     FileHashMismatch,
     /// <summary>
+    /// The zip's files are not the ones the manifest lists (<see cref="ExtensionFileHashes"/>): a file is missing, different or not listed,
+    /// a file is held twice, or the manifest lists none.
+    /// </summary>
+    ContentMismatch,
+    /// <summary>
     /// The package was published for another system than the platform's, or its manifest does not say which.
     /// </summary>
     OtherRuntime,
@@ -92,6 +96,11 @@ public enum ExtensionPackOutcome
     /// The executable is not the one the manifest's file hash describes: it changed after the extension was described.
     /// </summary>
     FileHashMismatch,
+    /// <summary>
+    /// The folder's files are not the ones the manifest lists (<see cref="ExtensionFileHashes"/>): a file is missing, changed or not listed,
+    /// or the manifest lists none.
+    /// </summary>
+    ContentMismatch,
 }
 
 /// <summary>
@@ -137,6 +146,10 @@ public sealed record CarriedExtensions(IReadOnlyList<ExtensionPackageManifest> C
 /// the extension's code.
 /// </para>
 /// <para>
+/// A folder is packed, and a package installed, only when its files are the ones its manifest lists, each with its hash, and no other
+/// (<see cref="ExtensionFileHashes"/>).
+/// </para>
+/// <para>
 /// A folder is written whole into a <c>.partial</c> folder beside it, then moved into place. A folder that is replaced or removed is first
 /// moved aside, to a <c>.removing</c> folder, then deleted; one that could not be deleted is deleted by the next install or removal
 /// (<see cref="SweepLeftovers"/>).
@@ -176,23 +189,29 @@ public static class ExtensionPackage
 
         using (var stream = File.OpenRead(executable))
         {
-            if (!string.Equals(Convert.ToBase64String(SHA512.HashData(stream)), manifest.FileHash, StringComparison.Ordinal))
+            if (!string.Equals(ExtensionFileHashes.HashOf(stream), manifest.FileHash, StringComparison.Ordinal))
             {
                 return ExtensionPackOutcome.FileHashMismatch;
             }
         }
 
+        // a package written into the folder it packs is not packed into itself.
         var partial = zip + PartialSuffix;
+        var written = new[] { Path.GetFullPath(partial), Path.GetFullPath(zip) };
+        var files = Directory.EnumerateFiles(extensionFolder, "*", SearchOption.AllDirectories)
+            .Where(file => !written.Contains(Path.GetFullPath(file), StringComparer.OrdinalIgnoreCase)).Order(StringComparer.Ordinal).ToList();
+        if (!ExtensionFileHashes.Match(manifest.FileHashes, ExtensionFileHashes.OfFiles(extensionFolder, files)))
+        {
+            return ExtensionPackOutcome.ContentMismatch;
+        }
+
         try
         {
             using (var archive = ZipFile.Open(partial, ZipArchiveMode.Create))
             {
-                // a package written into the folder it packs is not packed into itself.
-                var written = new[] { Path.GetFullPath(partial), Path.GetFullPath(zip) };
-                foreach (var file in Directory.EnumerateFiles(extensionFolder, "*", SearchOption.AllDirectories)
-                    .Where(file => !written.Contains(Path.GetFullPath(file), StringComparer.OrdinalIgnoreCase)).Order(StringComparer.Ordinal).ToList())
+                foreach (var file in files)
                 {
-                    var name = Path.GetRelativePath(extensionFolder, file).Replace('\\', '/');
+                    var name = ExtensionFileHashes.PathOf(Path.GetRelativePath(extensionFolder, file));
                     var entry = archive.CreateEntryFromFile(file, name);
                     // a regular file's Unix mode, in the upper half: rwxr-xr-x for the executable, rw-r--r-- for the others.
                     entry.ExternalAttributes = (string.Equals(name, manifest.Name, StringComparison.Ordinal) ? 0x81ED : 0x81A4) << 16;
@@ -265,6 +284,11 @@ public static class ExtensionPackage
         if (!string.Equals(HashOf(executable), manifest.FileHash, StringComparison.Ordinal))
         {
             return ExtensionInstallOutcome.FileHashMismatch;
+        }
+
+        if (HashesOf(archive) is not { } found || !ExtensionFileHashes.Match(manifest.FileHashes, found))
+        {
+            return ExtensionInstallOutcome.ContentMismatch;
         }
 
         var installed = Directory.Exists(folder) ? ReadInstalled(folder) : null;
@@ -505,7 +529,22 @@ public static class ExtensionPackage
     private static string HashOf(ZipArchiveEntry entry)
     {
         using var stream = entry.Open();
-        return Convert.ToBase64String(SHA512.HashData(stream));
+        return ExtensionFileHashes.HashOf(stream);
+    }
+
+    // the hashes of the files a zip unzips to, its manifest at its root aside; null when two entries unzip to one file.
+    private static IReadOnlyDictionary<string, string>? HashesOf(ZipArchive archive)
+    {
+        var files = archive.Entries.Where(entry => !entry.FullName.EndsWith('/') && !entry.FullName.EndsWith('\\'))
+            .Select(entry => (Name: ExtensionFileHashes.PathOf(entry.FullName), Entry: entry))
+            .Where(file => !ExtensionFileHashes.IsManifest(file.Name))
+            .ToList();
+        if (files.DistinctBy(file => file.Name, StringComparer.OrdinalIgnoreCase).Count() != files.Count)
+        {
+            return null;
+        }
+
+        return files.ToDictionary(file => file.Name, file => HashOf(file.Entry), StringComparer.Ordinal);
     }
 
     // a zip made on Windows records no Unix mode: the executable the platform starts is made executable by its owner, its group and others.
